@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<style>
+html,body{
+            width:100%;
+            height:100%;
+        }
+	#container{border:1px solid black;position:relative;;top:50%;left:50%;width:400px;height:250px;background:#f0f0f0;transform:translate(-50%,-50%);transform-origin:50% 50%;}
+	.row{margin:10px}
+	.row lable{width:100px; display:inline-block}
+	.row h3{text-align:center}
+</style>
+<body>
+		<div id="container">
+			<div class="row">
+				<h3>黄图霸业</h3>
+			</div>
+			<div class="row">
+				<lable>openid:</lable>
+				<input type='text' name="openid" />
+			</div>
+			<div class="row">
+				<lable>tempalteid:</lable>
+				<input type='text' name="tempalteid" />
+			</div>
+			<div class="row">
+				<lable>color:</lable>
+				<input type='text' name="color" />
+			</div>
+			<div class="row">
+				<lable>url:</lable>
+				<input type='text' name="url" />
+			</div>
+			
+			<div class="row">
+				<button id="sendTemplate">发送</button>
+			</div>
+		</div>
+</body>
+</html>
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		var postData= {};
+		$("#sendTemplate").on("click",function(){
+			$("#container [name]").each(function(i,v){	
+				postData[$(v).attr("name")] = $(v).val();
+			});
+			var ajaxIns = $.ajax({
+				type: 'POST',
+				data: postData,
+				url: "http://www.kiramario.com/kw/s/testTemplate",
+				success: function (res) {
+					console.log(res)
+					if(res.trim() === "ok"){
+						alert("发送成功");
+					}
+				},
+				error:function(error){
+			        var data=error.responseText;
+			        data=eval("("+data+")");
+			        console.log(data)
+			    }
+			});
+		})
+	})
+	
+</script>
+

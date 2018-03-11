@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<style>
+	html,body{
+            width:100%;
+            height:100%;
+        }
+	#container{border:1px solid black;position:relative;;top:50%;left:50%;width:400px;height:250px;background:#f0f0f0;transform:translate(-50%,-50%);transform-origin:50% 50%;}
+	.row{margin:10px}
+	.row lable{width:100px; display:inline-block}
+	.row h3{text-align:center}
+	.inl_blo{display:inline-block;}
+</style>
+<body>
+	<div id="content">
+		<div class="row">
+			<label>code: </label>
+			<span class="inl_blo" id="code"></span>
+		</div>
+		<div class="row">
+			<label>state: </label>
+			<span class="inl_blo" id="state"></span>
+		</div>
+		<div class="row">
+			<label>openid: </label>
+			<span class="inl_blo" id="openid"></span>
+		</div>
+		<div class="row">
+			<label>auth_access_token: </label>
+			<span class="inl_blo" id="auth_access_token"></span>
+		</div>
+		<div class="row">
+			<label>refresh_token: </label>
+			<span class="inl_blo" id="refresh_token"></span>
+		</div>
+		<div class="row">
+			<label>nickname: </label>
+			<span class="inl_blo" id="nickname"></span>
+		</div>
+		<div class="row">
+			<label>sex: </label>
+			<span class="inl_blo" id="sex"></span>
+		</div>
+		<div class="row">
+			<label>province: </label>
+			<span class="inl_blo" id="province"></span>
+		</div>
+		<div class="row">
+			<label>city: </label>
+			<span class="inl_blo" id="city"></span>
+		</div>
+		<div class="row">
+			<label>country: </label>
+			<span class="inl_blo" id="country"></span>
+		</div>
+		<div class="row">
+			<label>headimgurl: </label>
+			<span class="inl_blo" id="headimgurl"></span>
+		</div>
+		<div class="row">
+			<label>privilege: </label>
+			<span class="inl_blo" id="privilege"></span>
+		</div>
+		<div class="row">
+			<label>unionid: </label>
+			<span class="inl_blo" id="unionid"></span>
+		</div>
+		<div class="row">
+			<label>localStorage: </label>
+			<span class="inl_blo" id="localStorage"></span>
+		</div>
+		<div class="row">
+			<button id="btn1">click to remove localstorage</button>
+			<button id="btn2">click to alert localstorage</button>
+		</div>
+	</div>
+</body>
+</html>
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		
+		var fillPage = function(){
+			$("#code").html(getDataLocal("code"));
+			$("#state").html(getDataLocal("state"));
+			$("#openid").html(getDataLocal("openid"));
+			$("#auth_access_token").html(getDataLocal("auth_access_token"));
+			$("#refresh_token").html(getDataLocal("refresh_token"));
+			$("#nickname").html(getDataLocal("nickname"));
+			$("#sex").html(getDataLocal("sex"));
+			$("#province").html(getDataLocal("province"));
+			$("#city").html(getDataLocal("city"));
+			$("#country").html(getDataLocal("country"));
+			$("#headimgurl").html(getDataLocal("headimgurl"));
+			$("#privilege").html(getDataLocal("privilege"));
+			$("#unionid").html(getDataLocal("unionid"));
+		}
+		
+		
+		var saveDataLocal = function(key,value){
+			if(!window.localStorage){
+	            alert("浏览器不支持localstorage");
+			}else{
+				var storage=window.localStorage;
+				storage.setItem(key,value);
+			}
+		}
+		
+		var getDataLocal = function(key){
+			if(!window.localStorage){
+	            alert("浏览器不支持localstorage");
+			}else{
+				var storage=window.localStorage;
+				return storage.getItem(key);
+			}
+		}
+		
+		var deleteDataLocal = function(key){
+			if(!window.localStorage){
+	            alert("浏览器不支持localstorage");
+			}else{
+				var storage=window.localStorage;
+				if(typeof key !== 'undefined'){
+					storage.removeItem(key);
+				}else{
+					storage.clear()
+				}
+			}
+		}
+		
+		$("#btn1").on("click",function(){
+			window.localStorage.clear();
+		})
+		$("#btn2").on("click",function(){
+			$("#localStorage").html("");
+			var _html = "";
+			for(key in window.localStorage){
+				_html += key + ": " + getDataLocal(key) + "<br/>";
+			}
+			$("#localStorage").html(_html);
+		})
+		
+		var getAuthAccessToken = function(code){
+			var postData = {
+					"code":code,
+					"op":"getAccessToken"
+			}
+			var ajaxIns = $.ajax({
+				type: 'POST',
+				data: postData,
+				url: "http://120.27.16.113/kw/s/WxPageAuth",
+				success: function (res) {
+					alert("success")
+					data=eval("("+res+")");
+					saveDataLocal("openid",data["openid"]);
+					saveDataLocal("auth_access_token",data["access_token"]);
+					saveDataLocal("refresh_token",data["refresh_token"]);
+					getUserInfo(data["access_token"],data["openid"]);
+				},
+				error:function(error){
+			        var data=error.responseText;
+			        data=eval("("+data+")");
+			        alert("error")
+			    }
+			});
+		
+			
+		}
+		
+		var getUserInfo = function(authAccessToken,openid){
+			alert("in getuserinfo")
+			var postData = {
+					"authAccessToken":authAccessToken,
+					"openid":openid,
+					"op":"getUserInfo"
+			}
+			var ajaxIns = $.ajax({
+				type: 'POST',
+				data: postData,
+				url: "http://120.27.16.113/kw/s/WxPageAuth",
+				success: function (res) {
+					data=eval("("+res+")");
+					saveDataLocal("nickname",data["nickname"]);
+					saveDataLocal("sex",data["sex"]);
+					saveDataLocal("province",data["province"]);
+					saveDataLocal("city",data["city"]);
+					saveDataLocal("country",data["country"]);
+					saveDataLocal("headimgurl",data["headimgurl"]);
+					saveDataLocal("privilege",data["privilege"]);
+					saveDataLocal("unionid",data["unionid"]);
+					fillPage();
+				},
+				error:function(error){
+			        var data=error.responseText;
+			        data=eval("("+data+")");
+			        console.log(data)
+			    }
+			}); 
+		}
+		
+		if(location.href.indexOf("code=") > -1){
+			var codeRe = /code=([^&]+)/g,codeInfo=null,code="";
+			var stateRe = /state=([^&]+)/g,stateInfo=null,state="";
+			while((codeInfo=codeRe.exec(location.href)) != null){
+				code=codeInfo[1];
+			}
+			while((stateInfo=stateRe.exec(location.href)) != null){
+				state=stateInfo[1];
+			}
+			alert("code: " + code);
+			alert("getDataLocal(code): " + getDataLocal("code"));
+			alert(getDataLocal("code")==code);
+			if(getDataLocal("code")==code){
+				alert("re in");
+			}else{
+				saveDataLocal("code",code);
+				saveDataLocal("state",state);
+				alert("in")
+				getAuthAccessToken(code);
+			}
+			
+		}else{
+			alert("jump")
+			window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe12c59bafb7632a1&redirect_uri='+ encodeURIComponent(window.location.href) +'&response_type=code&scope=snsapi_userinfo&state=aa00aa#wechat_redirect';
+		
+		}
+	})
+	
+</script>
+

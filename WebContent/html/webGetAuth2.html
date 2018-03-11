@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<style>
+	html,body{
+            width:100%;
+            height:100%;
+        }
+	#container{border:1px solid black;position:relative;;top:50%;left:50%;width:400px;height:250px;background:#f0f0f0;transform:translate(-50%,-50%);transform-origin:50% 50%;}
+	.row{margin:10px}
+	.row lable{width:100px; display:inline-block}
+	.row h3{text-align:center}
+	.inl_blo{display:inline-block;}
+</style>
+<body>
+	<div id="content">
+		<div class="row">
+			<div id="context">
+			
+			</div>
+		</div>
+		<div class="row">
+			<button id="btn1">click to remove localstorage</button>
+			<button id="btn2">click to alert localstorage</button>
+		</div>
+		<div class="row" id="localStorage">
+		
+		</div>
+	</div>
+</body>
+</html>
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		
+		var saveDataLocal = function(key,value){
+			if(!window.localStorage){
+	            alert("浏览器不支持localstorage");
+			}else{
+				var storage=window.localStorage;
+				storage.setItem(key,value);
+			}
+		}
+		
+		var getDataLocal = function(key){
+			if(!window.localStorage){
+	            alert("浏览器不支持localstorage");
+			}else{
+				var storage=window.localStorage;
+				return storage.getItem(key);
+			}
+		}
+		
+		var deleteDataLocal = function(key){
+			if(!window.localStorage){
+	            alert("浏览器不支持localstorage");
+			}else{
+				var storage=window.localStorage;
+				if(typeof key !== 'undefined'){
+					storage.removeItem(key);
+				}else{
+					storage.clear()
+				}
+			}
+		}
+		
+		$("#btn1").on("click",function(){
+			window.localStorage.clear();
+		})
+		$("#btn2").on("click",function(){
+			$("#localStorage").html("");
+			var _html = "";
+			for(key in window.localStorage){
+				_html += key + ": " + getDataLocal(key) + "<br/>";
+			}
+			$("#localStorage").html(_html);
+		})
+		
+		var getAuthAccessToken = function(code){
+			var postData = {
+					"code":code,
+					"op":"getAccessToken"
+			}
+			var ajaxIns = $.ajax({
+				type: 'POST',
+				data: postData,
+				url: "http://120.27.16.113/kw/s/WxPageAuth",
+				success: function (res) {
+					$("#context").html(res);
+				},
+				error:function(error){
+					$("#context").html("error:" + error);
+			    }
+			});
+			
+		}
+		if(location.href.indexOf("code=") > -1){
+			var codeRe = /code=([^&]+)/g,codeInfo=null,code="";
+			var stateRe = /state=([^&]+)/g,stateInfo=null,state="";
+			while((codeInfo=codeRe.exec(location.href)) != null){
+				code=codeInfo[1];
+			}
+			while((stateInfo=stateRe.exec(location.href)) != null){
+				state=stateInfo[1];
+			}
+			saveDataLocal("code_base",code);
+			saveDataLocal("state_base",state);
+			alert("in")
+			getAuthAccessToken(code);
+		}else{
+			window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe12c59bafb7632a1&redirect_uri='+ encodeURIComponent(window.location.href) +'&response_type=code&scope=snsapi_base&state=aa00aa#wechat_redirect';
+		}
+	})
+	
+</script>
+

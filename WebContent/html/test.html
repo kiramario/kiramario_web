@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+	<h1>I AM THE TEST PAGE</h1>
+	<div>
+		<button id="btn1">test click 1</button>
+	</div>
+</body>
+</html>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		var wxFunc = function(config){
+			wx.config({
+				debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+				appId: config['appid'], // 必填，公众号的唯一标识
+				timestamp: config['timestamp'], // 必填，生成签名的时间戳
+				nonceStr: config['noncestr'], // 必填，生成签名的随机串
+				signature: config['signature'],// 必填，签名，见附录1
+				jsApiList: ["onMenuShareTimeline"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+
+			});
+			
+			wx.ready(function(){
+			    alert("config success");
+			    wx.onMenuShareTimeline({
+				    title:"sahretitle",
+				    link: "http://kiramario.applinzi.com",
+				    imgUrl: "",
+				    success: function () {
+				    	alert("fenx succ")
+				    },
+				    cancel: function () {}
+				});
+			});
+			
+			wx.error(function(res){
+				  alert("config error")
+			});
+		}
+
+		var postData = {
+				"url":location.href
+		}
+		var ajaxIns = $.ajax({
+			type: 'POST',
+			data: postData,
+			url: "http://kiramario.applinzi.com/s/getJsSignature",
+			success: function (res) {
+				data=eval("("+res+")");
+				console.log(data)
+				wxFunc(data);
+			},
+			error:function(error){
+		        var data=error.responseText;
+		        data=eval("("+data+")");
+		        console.log(data)
+		    }
+		});
+	})
+	
+	
+	
+	
+	
+	
+</script>
+
