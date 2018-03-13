@@ -65,7 +65,7 @@ public class PriceMentionJobNeicun implements JobUtilInterf{
 			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnectorLocal();
 			Connection con = mysqlConnector.getConnection();
 			Statement statement = (Statement) con.createStatement();
-			String sql = "select * from t_jd_price_info where item_id='J_1268512342' order by create_time desc limit 1";
+			String sql = "select * from t_jd_price_info where item_id='J_12593081630' order by create_time desc limit 1";
 			ResultSet rs = statement.executeQuery(sql);
 			
 			while(rs.next()){

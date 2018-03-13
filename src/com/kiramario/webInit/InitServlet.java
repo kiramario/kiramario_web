@@ -25,5 +25,7 @@ public class InitServlet extends HttpServlet{
 		
 		PriceMentionTrigger jobTrig = JobTriggerFactory.getPriceMentionTrigger();
 		jobTrig.startJob();
+		PriceMentionNeicunTrigger jobTrigNeicun = PriceMentionNeicunTrigger.getPriceMentionTrigger();
+		jobTrigNeicun.startJob();
 	}
 }

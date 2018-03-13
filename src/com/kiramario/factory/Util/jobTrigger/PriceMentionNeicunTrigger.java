@@ -52,12 +52,12 @@ public class PriceMentionNeicunTrigger implements JobTriggerInterf{
 		try {
 			this.sched.shutdown(true);
 		} catch (SchedulerException e) {
-			log.error("[PriceMentionTrigger]:" + e.toString());
+			log.error("[PriceMentionNeicunTrigger]:" + e.toString());
 		}
 	}
 	
 	public static void main(String[] args){
-		PriceMentionTrigger t = new PriceMentionTrigger();
+		PriceMentionNeicunTrigger t = new PriceMentionNeicunTrigger();
 		t.startJob();
 	}
 }
