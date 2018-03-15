@@ -13,7 +13,6 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 public class QutazdemoCTest {
 	private static Logger _log = LoggerFactory.getLogger(QutazdemoCTest.class);
@@ -51,7 +50,7 @@ public class QutazdemoCTest {
 		    
 		    _log.info("------- Shutting Down ---------------------");
 			scheduler.shutdown(true);
-		}catch(SchedulerException | ParseException e){
+		}catch(SchedulerException  e){
 			e.printStackTrace();
 		}
 	}

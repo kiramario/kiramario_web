@@ -1,11 +1,5 @@
 package com.kiramario.factory.Util.config;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import com.kiramario.factory.Interf.MysqlConfig;
 
 public class MysqlConfigLocal implements MysqlConfig{
@@ -13,15 +7,19 @@ public class MysqlConfigLocal implements MysqlConfig{
 	private String url = "jdbc:mysql://localhost:3306/test";
 	private String user = "root";
 	private String password = "root";
+	@Override
 	public String getDriver() {
 		return driver;
 	}
+	@Override
 	public String getUrl() {
 		return url;
 	}
+	@Override
 	public String getUser() {
 		return user;
 	}
+	@Override
 	public String getPassword() {
 		return password;
 	}

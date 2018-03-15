@@ -1,7 +1,6 @@
 package com.kiramario.factory.Util.jobTrigger;
 
 
-import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import org.apache.log4j.Logger;
@@ -15,12 +14,11 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import com.kiramario.factory.JobUtilFactory;
 import com.kiramario.factory.Interf.JobTriggerInterf;
-import com.kiramario.factory.Util.job.PriceMentionJob;
-import com.kiramario.util.HttpsConnect;
 public class PriceMentionTrigger implements JobTriggerInterf{
 	private static Logger log = Logger.getLogger(PriceMentionTrigger.class);
 	private Scheduler sched = null;
 
+	@Override
 	public void startJob(){
 		SchedulerFactory sf = new StdSchedulerFactory();
 		
@@ -32,7 +30,7 @@ public class PriceMentionTrigger implements JobTriggerInterf{
 			Trigger trigger = newTrigger()
 								.withIdentity("PriceMentionTrigger","group_sendTemplate_trigger")
 								.startNow()
-								.withSchedule(CronScheduleBuilder.cronSchedule("* * 0/1 * * ?"))
+								.withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))
 								.forJob("PriceMentionJob", "group_sendTemplate")
 								.build(); 
 			this.sched.scheduleJob(job,trigger);
@@ -59,8 +57,8 @@ public class PriceMentionTrigger implements JobTriggerInterf{
 		}
 	}
 	
-	public static void main(String[] args){
+/*	public static void main(String[] args){
 		PriceMentionTrigger t = new PriceMentionTrigger();
 		t.startJob();
-	}
+	}*/
 }

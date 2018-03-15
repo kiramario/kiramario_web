@@ -28,7 +28,7 @@ import com.kiramario.util.SerializeTool;
 
 public class PriceMentionJobNeicun implements JobUtilInterf{
 	private static Logger log = Logger.getLogger(PriceMentionJobNeicun.class);
-	private String jobName = "PriceMentionJob";
+	private String jobName = "PriceMentionJobNeicun";
 	private String jobGroup = "group_sendTemplate";
 	private String seralizeName = "/sFile/PriceMentionJob_neicun";
 	private SerializeTool serializeTool = null;
@@ -37,7 +37,8 @@ public class PriceMentionJobNeicun implements JobUtilInterf{
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		// TODO Auto-generated method stub
-		Map<String,String> basicInfo = this.getBasicInfo();
+		log.info("JobExecutionException");
+		/*Map<String,String> basicInfo = this.getBasicInfo();
 		if(judgeData()){
 			String accesstoken = StaticApplications.getStandardWxConif().getAccessToken();
 			String baseUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accesstoken;
@@ -54,7 +55,7 @@ public class PriceMentionJobNeicun implements JobUtilInterf{
 			log.info(basicInfo.get("templateId") + "; price: " + dao.getPrice() + "; name: " + dao.getItem_name());
 		}else{
 			log.info(basicInfo.get("templateId") + " do not need to push");
-		}
+		}*/
 	}
 	
 	private Map<String,WxTemplateValueInterf> getTemplateData(JobExecutionContext context){
@@ -62,9 +63,9 @@ public class PriceMentionJobNeicun implements JobUtilInterf{
 		String item_name="";
 		String create_time="";
 		try{
-			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnectorLocal();
+			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnector();
 			Connection con = mysqlConnector.getConnection();
-			Statement statement = (Statement) con.createStatement();
+			Statement statement = con.createStatement();
 			String sql = "select * from t_jd_price_info where item_id='J_12593081630' order by create_time desc limit 1";
 			ResultSet rs = statement.executeQuery(sql);
 			
@@ -101,10 +102,10 @@ public class PriceMentionJobNeicun implements JobUtilInterf{
 		boolean isSend = false;
 		dao = GetDaoFactory.getJdPriceInfoDao();
 		try{
-			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnectorLocal();
+			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnector();
 			Connection con = mysqlConnector.getConnection();
-			Statement statement = (Statement) con.createStatement();
-			String sql = "select * from t_jd_price_info where item_id='3541223' order by create_time desc limit 1";
+			Statement statement = con.createStatement();
+			String sql = "select * from t_jd_price_info where item_id='J_12593081630' order by create_time desc limit 1";
 			ResultSet rs = statement.executeQuery(sql);
 			
 			while(rs.next()){

@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 
 import org.apache.log4j.Logger;
 
-import com.kiramario.factory.Interf.JobTriggerInterf;
 import com.kiramario.factory.Util.jobTrigger.PriceMentionNeicunTrigger;
 import com.kiramario.factory.Util.jobTrigger.PriceMentionTrigger;
 

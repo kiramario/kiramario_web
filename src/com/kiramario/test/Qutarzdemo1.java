@@ -9,8 +9,6 @@ import static org.quartz.TriggerBuilder.*;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobDetail;
-
-import static org.quartz.SimpleScheduleBuilder.*;
 public class Qutarzdemo1 {
 
 	public static void main(String[] args) {

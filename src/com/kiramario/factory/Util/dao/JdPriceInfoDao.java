@@ -8,6 +8,7 @@ public class JdPriceInfoDao implements DaoInterf{
 	private String item_name;
 	private String price;
 	private String create_time;
+	private static final long serialVersionUID = 20180314141400L;
 	public int getId() {
 		return id;
 	}

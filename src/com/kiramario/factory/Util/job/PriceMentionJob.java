@@ -1,25 +1,16 @@
 package com.kiramario.factory.Util.job;
 
-import static org.quartz.JobBuilder.newJob;
-
 import java.io.File;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-
 import com.kiramario.factory.Interf.JobUtilInterf;
 import com.kiramario.factory.StaticApplications;
 import com.alibaba.fastjson.JSON;
@@ -45,7 +36,8 @@ public class PriceMentionJob implements JobUtilInterf{
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		// TODO Auto-generated method stub
-		Map<String,String> basicInfo = this.getBasicInfo();
+		log.info("PriceMentionJob");
+	/*	Map<String,String> basicInfo = this.getBasicInfo();
 		if(judgeData()){
 			String accesstoken = StaticApplications.getStandardWxConif().getAccessToken();
 			String baseUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accesstoken;
@@ -62,7 +54,7 @@ public class PriceMentionJob implements JobUtilInterf{
 			log.info(basicInfo.get("templateId") + "; price: " + dao.getPrice() + "; name: " + dao.getItem_name());
 		}else{
 			log.info(basicInfo.get("templateId") + " do not need to push");
-		}
+		}*/
 	}
 	
 	private Map<String,WxTemplateValueInterf> getTemplateData(JobExecutionContext context){
@@ -70,9 +62,9 @@ public class PriceMentionJob implements JobUtilInterf{
 		String item_name="";
 		String create_time="";
 		try{
-			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnectorLocal();
+			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnector();
 			Connection con = mysqlConnector.getConnection();
-			Statement statement = (Statement) con.createStatement();
+			Statement statement = con.createStatement();
 			String sql = "select * from t_jd_price_info where item_id='3541223' order by create_time desc limit 1";
 			ResultSet rs = statement.executeQuery(sql);
 			
@@ -109,9 +101,9 @@ public class PriceMentionJob implements JobUtilInterf{
 		boolean isSend = false;
 		dao = GetDaoFactory.getJdPriceInfoDao();
 		try{
-			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnectorLocal();
+			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnector();
 			Connection con = mysqlConnector.getConnection();
-			Statement statement = (Statement) con.createStatement();
+			Statement statement = con.createStatement();
 			String sql = "select * from t_jd_price_info where item_id='3541223' order by create_time desc limit 1";
 			ResultSet rs = statement.executeQuery(sql);
 			

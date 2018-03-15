@@ -2,12 +2,8 @@ package com.kiramario.factory;
 
 import static org.quartz.JobBuilder.newJob;
 
-import java.lang.reflect.Constructor;
-
 import org.apache.log4j.Logger;
 import org.quartz.JobDetail;
-
-import com.kiramario.factory.Util.job.PriceMentionJob;
 
 public class JobUtilFactory {
 	private static Logger logger = Logger.getLogger(JobUtilFactory.class);

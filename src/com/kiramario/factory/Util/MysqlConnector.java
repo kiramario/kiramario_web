@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 
 import com.kiramario.factory.Interf.DataBaseInterf;
 import com.kiramario.factory.Interf.MysqlConfig;
-import com.kiramario.factory.Util.config.MysqlConfigLocal;
 
 public class MysqlConnector implements DataBaseInterf{
 	private static Logger log = Logger.getLogger(MysqlConnector.class);

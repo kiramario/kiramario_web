@@ -18,6 +18,7 @@ public class PriceMentionNeicunTrigger implements JobTriggerInterf{
 	private static Logger log = Logger.getLogger(PriceMentionNeicunTrigger.class);
 	private Scheduler sched = null;
 
+	@Override
 	public void startJob(){
 		SchedulerFactory sf = new StdSchedulerFactory();
 		
@@ -29,7 +30,7 @@ public class PriceMentionNeicunTrigger implements JobTriggerInterf{
 			Trigger trigger = newTrigger()
 								.withIdentity("PriceMentionNeicunTrigger","group_sendTemplate_trigger")
 								.startNow()
-								.withSchedule(CronScheduleBuilder.cronSchedule("* * 0/1 * * ?"))
+								.withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))
 								.forJob("PriceMentionJobNeicun", "group_sendTemplate")
 								.build(); 
 			this.sched.scheduleJob(job,trigger);
@@ -56,8 +57,8 @@ public class PriceMentionNeicunTrigger implements JobTriggerInterf{
 		}
 	}
 	
-	public static void main(String[] args){
+/*	public static void main(String[] args){
 		PriceMentionNeicunTrigger t = new PriceMentionNeicunTrigger();
 		t.startJob();
-	}
+	}*/
 }

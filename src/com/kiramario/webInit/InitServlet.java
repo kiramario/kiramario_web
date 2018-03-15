@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.kiramario.factory.StaticApplications;
 import com.kiramario.factory.Util.StandardWxConfig;
+import com.kiramario.factory.Util.jobTrigger.PriceMentionNeicunTrigger;
 import com.kiramario.factory.Util.jobTrigger.PriceMentionTrigger;
 import com.kiramario.factory.JobTriggerFactory;
 public class InitServlet extends HttpServlet{
@@ -22,10 +23,5 @@ public class InitServlet extends HttpServlet{
 		TokenThread token_thread = new TokenThread(wxconfig);
 		token_thread.setName("getAccToken_thread");
 		token_thread.start();
-		
-		PriceMentionTrigger jobTrig = JobTriggerFactory.getPriceMentionTrigger();
-		jobTrig.startJob();
-		PriceMentionNeicunTrigger jobTrigNeicun = PriceMentionNeicunTrigger.getPriceMentionTrigger();
-		jobTrigNeicun.startJob();
 	}
 }

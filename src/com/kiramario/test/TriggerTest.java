@@ -1,7 +1,5 @@
 package com.kiramario.test;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 import com.kiramario.factory.JobTriggerFactory;
