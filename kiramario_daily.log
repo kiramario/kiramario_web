@@ -1,0 +1,28 @@
+=========Eclipse启动时报错Java was started but returned exit code=13============
+
+原因是通过第三方更新JRE时，第三方安装的是32位的JRE，
+与64位的eclipse不匹配(报错信息的--launcher.library中有x86_64说明这个eclipse是64位的)
+
+JDK8/JRE8在安装完成之后，会添加一个环境变量C:\ProgramData\Oracle\Java\javapath
+这个环境变量是三个快捷方式，分别是java.exe.lnk javaw.exe.lnk javaws.exe.lnk，
+你每安装一次JDK/JRE，这三个快捷方式都会更新路径为最后一次的JRE路径
+
+
+============Can't load IA 32-bit .dll on a AMD 64-bit platform================
+============启动Tomcat 出现 Can't load AMD 64-bit .dll on a IA 32-bit platform错误的解决办法=============
+
+重新安装tomcat, jdk和tomcat版本不一致 64位或者32位
+
+
+
+==================eclipse启动参数==============
+Specifying the Java virtual machine： eclipse -vm c:\jdk1.4.2\jre\bin\javaw
+
+指定工作空间:	eclipse -data [目录]
+
+
+eclipse.ini中添加两行
+-vm
+C:\Program Files\Java\jdk1.6.0_02\bin\javaw.exe
+注意: 要写在两行，写在一行不能生效
+注意: 这两行要定在-vmargs之前，不然也不能生效

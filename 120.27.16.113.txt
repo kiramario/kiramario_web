@@ -1,0 +1,102 @@
+==============结构
+/usr/local/bin	
+	--python_test.sh(调用python爬虫)
+	--kiramario_job_task.sh(java定时任务)
+
+
+
+
+
+
+
+
+
+
+
+===============
+
+ls -l python_test.sh	查询文件权限
+
+drwxr-xr-x 2 root root 4096 09-22 17:19 test
+
+第一个字符代表文件类型。d代表目录,-代表非目录。
+
+接下来每三个字符为一组权限，分为三组，依次代表所有者权限，同组用户权限，其它用户权限
+
+用户和用户组都是root
+
+=============
+
+chmod -v u+x python_test.sh 	//更改文件权限
+
+-c 当发生改变时，报告处理信息
+-f 错误信息不输出
+-R 处理指定目录以及其子目录下的所有文件
+-v 运行时显示详细处理信息 
+
+u 表示该文件的拥有者(user)
+g 表示与该文件的拥有者属于同一个群体(group)者
+o 表示其他以外的人(other)
+a 表示这三者皆是(all) 
+
++x 增加可运行权限
+
+==================
+
+systemctl enable crawler_test.service 
+systemctl status crawler_test.service //查看服务状态
+systemctl start crawler_test.service 	//启动服务
+systemctl stop	crawler_test.service 
+systemctl restart crawler_test.service
+
+
+CentOS 7的服务systemctl脚本存放在：/usr/lib/systemd/，有系统（system）和用户（user）之分，需要开机不登陆就能运行的程序，存在系统服务里，即：/usr/lib/systemd/system目录下
+
+
+===============
+删除mysql
+
+1.输入命令查询系统中已安装的mysql。
+rpm -qa |grep -i mysql
+
+2.逐个卸载mysql。
+yum remove 系统显示已安装的mysql
+比如：yum remove mysql-community-server-5.7.19-1.el7.x86_64
+
+3.卸载完成后使用find命令来查找系统中存在的mysql文件夹。
+find / -name mysql
+
+4.使用rm -rf命令逐个删除文件夹路径即可。
+比如：rm -rf /etc/logrotate.d/mysql
+
+
+============
+sh 在windows中编辑后复制到centos，执行sh提示 没有那个文件或目录
+错误分析：
+该错误是由于shell脚本在windows机器上进行编辑，拷贝至服务器由于结束字符集的问题而造成。
+解决方案：
+使用vi命令进行编辑该文件，进入后输入:set ff=unix 回车，wq保存退出即可。
+set ff=unix   :  告诉 vi 编辑器，使用unix换行符
+
+
+
+==============
+sh中用java 命令 报错 找不到主类
+
+vim /etc/profile 去设置环境变量，路径用:来分隔
+source /etc/profile	让环境变量生效
+
+也按照网上提供的方法将环境变量重新设置了一遍
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.9
+
+export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+export PATH=$PATH:$JAVA_HOME/bin
+然后cd 到JobExecute.class所在目录 然后 java JobExecute
+执行还是失败
+
+
+最后发现stack overflow上面有一个类似问题
+https://stackoverflow.com/questions/17743430/error-could-not-find-or-load-main-class-xxx-linux
+原来我不能导这个文件所在目录去执行，此文件头部的package 是com.kiramario.webInit。
+所以，cd到com目录同级， java com.kiramario.webInit.JobExecute 执行成功
