@@ -1,0 +1,77 @@
+
+
+连接失败....
+
+2018年3月14号下午, 本地mysql-font突然连接不上我的低配版阿里云服务器上的mysql数据库
+
+这让我感到奇怪，因为上一分钟我还正常访问数据库,在此期间,由于java连接数据库时我写错了数据库名称而提交了一个补丁。
+
+用putty登录了到我的服务器。
+通过 netstat -tulpn 查看发现没有我的mysqld,证明我的mysql服务中断了
+
+[第一次尝试]
+systemctl start mysql.service, 重新启动一下mysql服务, ...failed"大吃一斤",那赶紧试试systemctl restart mysql.service。
+果然还是不要骗自己。移步到/etc/init.d, 直接运行mysql（当初把mysql.server放过来改名为mysql）,
+提示ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/usr/local/mysql/tmp/mysql.sock'
+我的sockt 放在的是mysql安装目录下的tmp文件夹里面, cd /usr/local/mysql/tmp, 发现"mysql.sock"变成了"mysql.sock.lock"
+被lock住了, 将它删掉试试呢，直接在bin目录运行mysql,还是报错，总是提示Can't connect to local MySQL server through socket '/usr/local/mysql/tmp/mysql.sock'
+
+[第二次尝试]
+冷静下来，为了专心修复mysql,我吧tomcat服务器关掉了。再试一下systemctl restart mysql.servic,果然没什么鸟用
+提示的是找不到sock,那我重新生成sock文件就可以了,现在我把它删掉了，那么恢复的方法是：
+百度"mysql sock文件丢失",搜到一堆方法，试了之后还是不能生成新的sock，最后发现了一篇帖子,说是自己手动建立一个。
+看到这里我恍然大悟，我赶紧把mysql.sock.lock（备份了一份）打开看了下，里面就是一个数字，根据帖子记载，是mysql的
+进程号，根据我猜想，mysql重启都失败了，这个lock里面的进程号应该是过时的。但是，我现在mysql不是启动失败了吗，启动失败的话难道还有进程号？
+抱着试一试的态度，输入ps -ef | grep mysqld | grep -v grep，发行果然有哦,打印出了
+root      3232  2037  0 09:02 pts/0    00:00:00 grep --color=auto mysql
+这个进程应该是一个守护进程,应该是出什么问题导致他停掉了,并不是杀死，这个进程应该是一开始配置开机启动mysql就会产生的吧,这个我就不甚了解了。
+但是3232 和 2037到底把那个填入sock里面呢,根据帖子里面说，其中一个数字是当前shell窗口的pid,是mysql的父级,也就是当前ssh窗口的pid,
+那么我就echo $$发现，当前窗口shell是2037
+于是我把3232填入了我的sock,传上去后,systemctl start mysql.service 又一次failed
+
+[第三次尝试]
+尝试了各种办法最终再冷静下来,准备重装算球，算求...。
+网上开始搜如何彻底删除干净mysql的时候，无意中执行了一句  find / -name mysql,发现/run/lock/subsys/mysql,这是个什么目录
+据网上说,产生这个的原因就在于mysql异常退出，而且会导致无法启动mysql,解决方法是删掉,看到这里,我燃起了希望,果断删掉。
+cd /run/lock/subsys/
+rm -rf mysql
+满怀希望地输入systemctl start mysql.service,发现它好像这次在努力启动,突然感觉有戏的时候突然failed again...,伤心之余发现
+这次的报错信息是
+Starting MySQL..The server quit without updating PID file 
+
+这证明了什么?证明了我改动还是有点效果,只是效果不符合预期。
+
+[第四次尝试]
+再次冷静下来, 网上搜索, 我的mysql启动不起来各种相关字段。突然一片帖子引起了我的注意,他说他的mysql服务器是因为缓存内存不够了导致无缘无故挂掉,
+"无缘无故挂掉"这个描述和我在内心描述我的mysql的形容一字不差。这让我陷入沉思,难道真是内存导致的,内存在软件运行中起着太关键的作用了,我的低配版的内存好像就
+1G,现在1G能干啥? 为了验证我的想法，我到mysql的data目录,找到我的err文件(机器名称.err),从末尾往前开始找,突然看到一句
+[ERROR] InnoDB: Cannot allocate memory for the buffer pool
+有memory,有种好运要来的感觉
+一看错误发生时间,大致就是我修复mysql的期间内。
+
+于是我执行free -ml, 发行我的空闲内存只有几十兆,这还得了,是谁,难道是阿里云悄悄吃我内存逼我升级硬件,不过随后我对我这个想法感到羞愧,
+这种弊大于利的事情人家怎么可能做。
+
+这时,心情万分激动,因为我想到了我传的java代码里面有定时任务quartz。我也想起了,定时任务启动时创建的是进程吧,我还想起来了,我每次重启tomcat
+的时候,定时任务会重新初始化一次,那么我重启过多少次tomcat,系统里面就有多少次定时任务的进程
+
+当我敲下决定性的 top命令后,再按shift+m,从大到小显示进程,果然有好几个java进程在前排占起。
+然后 cd /proc/进程号, ls -ail, 打印出的exe不出所料指向我的jdk安装目录
+
+
+杀到进程后，systemctl start mysql.service，成功了！！！
+
+netstat -tulpn, 里面有3306 mysql,本地连接下，连接成功。
+
+心中长吁一口气，辛亏没有卸载
+
+
+【问题原因】：
+	1、内存不足,innodb_buffer_pool_size(这个参数主要作用是缓存innodb表的索引,数据,插入数据时的缓冲)设置过大,我设置为了1G
+	2、java定时任务没有关闭机制导致进程数量越来越多
+【解决方案】:
+	1、kill -s 9 进程号, 强制删除进程
+	2、修改mysql配置文件my.cnf(etc/my.cnf),innodb_buffer_pool_size = 128M
+【经验】；
+	1、要善于看错误日志
+	2、资源要及时释放
