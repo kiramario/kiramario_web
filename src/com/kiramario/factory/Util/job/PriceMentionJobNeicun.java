@@ -22,6 +22,7 @@ import com.kiramario.factory.Interf.JobUtilInterf;
 import com.kiramario.factory.Interf.WxTemplateValueInterf;
 import com.kiramario.factory.Util.MysqlConnector;
 import com.kiramario.factory.Util.SingleWxTemplate;
+import com.kiramario.factory.Util.StandardWxConfig;
 import com.kiramario.factory.Util.dao.JdPriceInfoDao;
 import com.kiramario.util.HttpsConnect;
 import com.kiramario.util.SerializeTool;
@@ -30,17 +31,26 @@ public class PriceMentionJobNeicun implements JobUtilInterf{
 	private static Logger log = Logger.getLogger(PriceMentionJobNeicun.class);
 	private String jobName = "PriceMentionJobNeicun";
 	private String jobGroup = "group_sendTemplate";
-	private String seralizeName = "/sFile/PriceMentionJob_neicun";
+	private String seralizeName = "sFile/PriceMentionJob_neicun";
+	private String wxconfig_seralizeName = "sFile/wxconfig";
 	private SerializeTool serializeTool = null;
 	private JdPriceInfoDao dao = null;
 	
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		// TODO Auto-generated method stub
-		log.info("JobExecutionException");
-		/*Map<String,String> basicInfo = this.getBasicInfo();
+		String accesstoken = "";
+		String path = PriceMentionJob.class.getClassLoader().getResource("").getPath() + wxconfig_seralizeName;
+		File file = new File(path);
+		SerializeTool configSerailizeTool = new SerializeTool<StandardWxConfig>();
+		if (file.exists()){
+			StandardWxConfig config = (StandardWxConfig) configSerailizeTool.anseriali(file);
+			accesstoken = config.getAccessToken();
+		}else{
+			log.error("no config seralize file");
+		}
+		
+		Map<String,String> basicInfo = this.getBasicInfo();
 		if(judgeData()){
-			String accesstoken = StaticApplications.getStandardWxConif().getAccessToken();
 			String baseUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accesstoken;
 
 			SingleWxTemplate template = GetWxTemplate.getSingleWxTemplate();
@@ -52,10 +62,10 @@ public class PriceMentionJobNeicun implements JobUtilInterf{
 			String jsonStr =JSON.toJSON(template).toString();
 			
 			JSONObject accessToken = HttpsConnect.httpRequest(baseUrl,"GET",jsonStr);
-			log.info(basicInfo.get("templateId") + "; price: " + dao.getPrice() + "; name: " + dao.getItem_name());
+			log.info(basicInfo.get("templateId") + "; price: " + dao.getPrice() + "; name: " + dao.getItem_name() + "result: " + accessToken);
 		}else{
 			log.info(basicInfo.get("templateId") + " do not need to push");
-		}*/
+		}
 	}
 	
 	private Map<String,WxTemplateValueInterf> getTemplateData(JobExecutionContext context){

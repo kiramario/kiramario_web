@@ -4,7 +4,7 @@ import com.kiramario.factory.Interf.MysqlConfig;
 
 public class MysqlConfigProduction implements MysqlConfig{
 	private String driver = "com.mysql.jdbc.Driver";
-	private String url = "jdbc:mysql://localhost:3306/test";
+	private String url = "jdbc:mysql://localhost:3306/reptile";
 	private String user = "root";
 	private String password = "admin@kiramario.com";
 	@Override

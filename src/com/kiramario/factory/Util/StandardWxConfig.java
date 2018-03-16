@@ -1,12 +1,15 @@
 package com.kiramario.factory.Util;
 
+import java.io.Serializable;
+
 import com.kiramario.factory.Interf.StandardContainerInterf;
 
-public class StandardWxConfig implements StandardContainerInterf{
+public class StandardWxConfig implements StandardContainerInterf,Serializable{
 	private String accessToken;
 	private String appid;
 	private String secretKey;
 	private String jsAPITicket;
+	private static final long serialVersionUID = 20180316134500L;
 	
 	public String getAccessToken() {
 		return accessToken;
