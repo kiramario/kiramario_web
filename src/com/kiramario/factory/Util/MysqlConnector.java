@@ -42,5 +42,4 @@ public class MysqlConnector implements DataBaseInterf{
 			log.error(e.toString());
 		}
 	}
-	
 }
