@@ -3,8 +3,14 @@ package com.kiramario.factory.Util;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import com.kiramario.factory.Interf.ControllerResInterf;
 
+@Scope("prototype")
+@Repository
 public class SingleControllerRes<K,V> implements ControllerResInterf<K,V>{
 	private int errcode=0;
 	private String msg="sucess!";

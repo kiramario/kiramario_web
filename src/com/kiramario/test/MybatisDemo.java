@@ -8,7 +8,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import com.kiramario.factory.Util.dao.mapperInter.IYsStatistic;
-import com.kiramario.factory.Util.dao.YsStatistic;
+import com.kiramario.factory.Util.dto.YsStatistic;
 
 public class MybatisDemo {
 

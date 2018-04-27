@@ -1,16 +1,18 @@
 package com.kiramario.factory.Util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kiramario.factory.GetBeansFactory;
 import com.kiramario.factory.StaticApplications;
 import com.kiramario.factory.Interf.WxApiReturnInterf;
+import com.kiramario.factory.Util.staticItems.StandardWxConfig;
 import com.kiramario.util.HttpsConnect;
 
 public class WxJsApiTicket implements WxApiReturnInterf{
 
-	@Override
 	public JSONObject getApiRes() {
 		// TODO Auto-generated method stub
-		String accessToken = StaticApplications.getStandardWxConif().getAccessToken();
+		StandardWxConfig wxConfig = GetBeansFactory.getStandardWxConif();
+		String accessToken = wxConfig.getAccessToken();
 		String baseUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+accessToken+"&type=jsapi";
 		JSONObject jsApiJson = HttpsConnect.httpRequest(baseUrl,"GET",null);
 		

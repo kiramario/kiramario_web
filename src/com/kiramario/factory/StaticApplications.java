@@ -1,52 +1,38 @@
 package com.kiramario.factory;
 
-import com.kiramario.factory.Util.StandardWxConfig;
+import com.kiramario.factory.Util.dao.mapperInter.IYsStatistic;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.log4j.Logger;
 
 import com.kiramario.factory.Interf.MysqlConfig;
-import com.kiramario.factory.Util.MysqlConnector;
+
 
 public class StaticApplications {
 	private static Logger log = Logger.getLogger(StaticApplications.class);
-	private static StandardWxConfig standardWxConfig = null;
-	private static MysqlConnector mysqlConnector = null;
 	
-	public static StandardWxConfig getStandardWxConif(){
-		if(standardWxConfig==null){
-			standardWxConfig = new StandardWxConfig();
-		}
-		return standardWxConfig;
-	}
-	
-	public static MysqlConnector getMysqlConnector(){
-		Properties properties = new Properties();
-		InputStream in = StaticApplications.class.getClassLoader().getResourceAsStream("project.properties");
-		try {
-			properties.load(in);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			log.error(e.toString());
-		}
-		String s = properties.getProperty("envornment");
+	public static SqlSession getMybatisSession(){
+		String mybatisConfig = "mybatis_kiramario.xml"; 
 		
-		MysqlConfig config = null;
-		if(s.equals("develop")){
-			config = GetConfigFactory.getMysqlConfigLocal();
-		}else if(s.equals("production")){
-			config = GetConfigFactory.getMysqlConfigProduction();
-		}
+		SqlSessionFactory sqlSessionFactory = null;
 		
-		if(mysqlConnector==null){
-			mysqlConnector = new MysqlConnector(config);
+		SqlSession session = null; 
+		try{
+			InputStream inputStream = Resources.getResourceAsStream(mybatisConfig);
+			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+			session = sqlSessionFactory.openSession();
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		return mysqlConnector;
+		return session;
 	}
-	
 	/*public static void main(String[] args) throws IOException{
 		
 	}*/

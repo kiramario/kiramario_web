@@ -13,25 +13,28 @@ public class FilterTest implements Filter{
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
-		System.out.println("end");  
+		System.out.println("destroy of filtertest");  
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		// TODO Auto-generated method stub
-		System.out.println("doFilter");
 		
-		response.setContentType("text/plain;charset=UTF-8");
+		System.out.println("FilterTest第一次拦截");         
+		
+		/*response.setContentType("text/plain;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write("sss");
+		response.getWriter().write("sss");*/
 		chain.doFilter(request, response);
+		
+		System.out.println("FilterTest第二次拦截");    
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		// TODO Auto-generated method stub
-		System.out.println("init Filter");
+		System.out.println("init of filtertest");
 		
 	}
 

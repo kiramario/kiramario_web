@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -15,14 +16,14 @@ import com.kiramario.factory.Interf.JobUtilInterf;
 import com.kiramario.factory.StaticApplications;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.kiramario.factory.GetDaoFactory;
+import com.kiramario.factory.GetBeansFactory;
 import com.kiramario.factory.GetWxTemplate;
 import com.kiramario.factory.GetWxTemplateValue;
 import com.kiramario.factory.Interf.WxTemplateValueInterf;
-import com.kiramario.factory.Util.MysqlConnector;
 import com.kiramario.factory.Util.SingleWxTemplate;
-import com.kiramario.factory.Util.StandardWxConfig;
-import com.kiramario.factory.Util.dao.JdPriceInfoDao;
+import com.kiramario.factory.Util.dao.mapperInter.IJdPriceInfoDto;
+import com.kiramario.factory.Util.dto.JdPriceInfoDto;
+import com.kiramario.factory.Util.staticItems.StandardWxConfig;
 import com.kiramario.util.HttpsConnect;
 import com.kiramario.util.SerializeTool;
 
@@ -33,7 +34,7 @@ public class PriceMentionJob implements JobUtilInterf{
 	private String seralizeName = "sFile/PriceMentionJob_1";
 	private SerializeTool serializeTool = null;
 	private String wxconfig_seralizeName = "sFile/wxconfig";
-	private JdPriceInfoDao dao = null;
+	private JdPriceInfoDto dto = null;
 	
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -62,32 +63,16 @@ public class PriceMentionJob implements JobUtilInterf{
 			String jsonStr =JSON.toJSON(template).toString();
 			
 			JSONObject accessToken = HttpsConnect.httpRequest(baseUrl,"GET",jsonStr);
-			log.info(basicInfo.get("templateId") + "; price: " + dao.getPrice() + "; name: " + dao.getItem_name() + "results: " + accessToken);
+			log.info(basicInfo.get("templateId") + "; price: " + dto.getPrice() + "; name: " + dto.getItem_name() + "results: " + accessToken);
 		}else{
 			log.info(basicInfo.get("templateId") + " do not need to push");
 		}
 	}
 	
 	private Map<String,WxTemplateValueInterf> getTemplateData(JobExecutionContext context){
-		String price="";
-		String item_name="";
+		String price=dto.getPrice();
+		String item_name=dto.getItem_name();
 		String create_time="";
-		try{
-			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnector();
-			Connection con = mysqlConnector.getConnection();
-			Statement statement = con.createStatement();
-			String sql = "select * from t_jd_price_info where item_id='3541223' order by create_time desc limit 1";
-			ResultSet rs = statement.executeQuery(sql);
-			
-			while(rs.next()){
-				price = rs.getString("price");
-				item_name = rs.getString("item_name");
-				create_time = rs.getString("create_time").substring(0,19);
-			}
-			mysqlConnector.closeConnection();
-		}catch(SQLException e){
-			log.error(e.toString());
-		}
 		
 		WxTemplateValueInterf tv1 = GetWxTemplateValue.getSingleWxTemplateValue("#173177",item_name);
 		WxTemplateValueInterf tv2 = GetWxTemplateValue.getSingleWxTemplateValue("#173177","\n"+price);
@@ -110,37 +95,31 @@ public class PriceMentionJob implements JobUtilInterf{
 	
 	private boolean judgeData(){
 		boolean isSend = false;
-		dao = GetDaoFactory.getJdPriceInfoDao();
+		dto = GetBeansFactory.getJdPriceInfoDto();
+		
 		try{
-			MysqlConnector mysqlConnector = StaticApplications.getMysqlConnector();
-			Connection con = mysqlConnector.getConnection();
-			Statement statement = con.createStatement();
-			String sql = "select * from t_jd_price_info where item_id='3541223' order by create_time desc limit 1";
-			ResultSet rs = statement.executeQuery(sql);
-			
-			while(rs.next()){
-				dao.setPrice(rs.getString("price"));
-				dao.setItem_name(rs.getString("item_name"));
-				dao.setCreate_time(rs.getString("create_time").substring(0,19));
-			}
-			mysqlConnector.closeConnection();
-		}catch(SQLException e){
+			SqlSession session = StaticApplications.getMybatisSession();
+			IJdPriceInfoDto jd = session.getMapper(IJdPriceInfoDto.class);
+			dto = jd.selectLatestOne("3541223");
+			session.commit();
+			session.close();
+		}catch(Exception e){
 			log.error(e.toString());
 		}
 		
-		this.serializeTool = new SerializeTool<JdPriceInfoDao>();
+		this.serializeTool = new SerializeTool<JdPriceInfoDto>();
 		
 		String path = PriceMentionJob.class.getClassLoader().getResource("").getPath() + seralizeName;
 		File file = new File(path);
 		
 		if (file.exists()){
-			JdPriceInfoDao dao_before = (JdPriceInfoDao) this.serializeTool.anseriali(file);
-			if(!dao_before.getPrice().equals(dao.getPrice())){
-				this.serializeTool.seriali(dao,file);
+			JdPriceInfoDto dto_before = (JdPriceInfoDto) this.serializeTool.anseriali(file);
+			if(!dto_before.getPrice().equals(dto.getPrice())){
+				this.serializeTool.seriali(dto,file);
 				isSend=true;
 			}
 		}else{
-			this.serializeTool.seriali(dao,file);
+			this.serializeTool.seriali(dto,file);
 			isSend=true;
 		}
 		return isSend;
@@ -148,6 +127,7 @@ public class PriceMentionJob implements JobUtilInterf{
 	
 	public static void main(String[] args){
 		System.out.println(PriceMentionJob.class.getClassLoader().getResource("").getPath());
+		PriceMentionJob p =new PriceMentionJob();
+		System.out.print(p.judgeData());
 	}
-	
 }

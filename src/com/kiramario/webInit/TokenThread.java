@@ -5,10 +5,11 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
-import com.kiramario.factory.Util.StandardWxConfig;
-import com.kiramario.factory.Util.dao.JdPriceInfoDao;
+import com.kiramario.factory.Util.staticItems.StandardWxConfig;
+import com.kiramario.factory.Util.dto.JdPriceInfoDto;
 import com.kiramario.factory.Util.job.PriceMentionJob;
 import com.kiramario.util.SerializeTool;
+import com.kiramario.factory.GetServicesFactory;
 import com.kiramario.factory.GetWxApiRes;
 
 public class TokenThread extends Thread{
@@ -27,7 +28,7 @@ public class TokenThread extends Thread{
 	}
 	
 	private void searilizeConfig(StandardWxConfig config){
-		SerializeTool serializeTool = new SerializeTool<JdPriceInfoDao>();
+		SerializeTool serializeTool = new SerializeTool<JdPriceInfoDto>();
 	
 		String path = PriceMentionJob.class.getClassLoader().getResource("").getPath() + seralizeName;
 		File file = new File(path);
@@ -39,7 +40,7 @@ public class TokenThread extends Thread{
 	public void run(){
 		while(true){
 			try {
-				JSONObject accesstoken = GetWxApiRes.getWxAccessToken().getApiRes();
+				JSONObject accesstoken = GetServicesFactory.getWxApiService().getAccessToken();
 				if(accesstoken!=null){
 					if(accesstoken.containsKey("errcode")){
 						int errcode = Integer.parseInt((String) accesstoken.get("errcode"));

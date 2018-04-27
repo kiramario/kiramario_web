@@ -1,0 +1,20 @@
+ this.getServletContext().getInitParameter("webParam");	
+ 获取的应该是 web.xml文件中的
+ 	<context-param>  
+      <param-name>webParam</param-name>  
+      <param-value>aaa</param-value>  
+    </context-param>  
+    
+    
+    
+    
+    
+    
+    
+    
+ 
+ 类加载器loader.getResourceAsStream()
+ 默认的是在src目录下，实际上就是编译后的classes目录西下
+ 
+而servletContext对象this.getServletContext().getResourceAsStream()
+默认的是web项目工程目录下，就是和src同级的那一层。就是conf里面设置的docBase

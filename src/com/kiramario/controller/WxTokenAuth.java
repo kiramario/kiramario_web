@@ -12,8 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-
+@Controller
+@RequestMapping("/s")
 public class WxTokenAuth{
 	private static Logger logger = Logger.getLogger(WxTokenAuth.class);
 	private String timestamp = "";
@@ -22,19 +27,18 @@ public class WxTokenAuth{
 	private String token = "kiramariotest";
 	private String echostr = "";
 			
-
-	public void execute(Map<String, Object> map) throws IOException {
-		HttpServletRequest request = (HttpServletRequest)map.get("request");
-		HttpServletResponse response = (HttpServletResponse)map.get("response");
-		PrintWriter out = response.getWriter();
+	@RequestMapping("/wxTokenAuth")
+	@ResponseBody
+	public String wxTokenAuth(HttpServletRequest request, HttpServletResponse response,Model model) throws IOException {
 		logger.info(request.getMethod().trim().equalsIgnoreCase("GET"));
+		String res = "";
 		if(request.getMethod().trim().equalsIgnoreCase("GET")){
 			timestamp = request.getParameter("timestamp");
 			signature = request.getParameter("signature");
 			nonce = request.getParameter("nonce");
 			echostr = request.getParameter("echostr");
 			if(checkToken()){
-				out.println(echostr);
+				res = echostr;
 			}else{
 				logger.warn("Authen failed");
 			}
@@ -48,8 +52,9 @@ public class WxTokenAuth{
 				content.append(new String(b, 0, lens));
 			}
 			String strcont = content.toString();// ÄÚÈÝ	
-			System.out.println(strcont);
+			logger.info(strcont);
 		}
+		return res;
 	}
 	
 	private boolean checkToken(){

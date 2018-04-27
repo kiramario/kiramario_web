@@ -1,0 +1,118 @@
+/* h1{color:red;height:200px;background:url('../images/test/test.png')} */
+html {
+	font-family: sans-serif; /* 1 */
+	line-height: 1.15; /* 2 */
+	-ms-text-size-adjust: 100%; /* 3 */
+	-webkit-text-size-adjust: 100%; /* 3 */
+}
+html,body{
+	width: 99%;
+    height: 99%;
+    margin: 0;
+	background-color:rgba(238,238,238,0.3)
+
+}
+ul{
+	padding:0;margin:0;list-style-type:none;
+}
+
+
+.hei_100{height:100%}
+.wid_100{width:100%}
+.dis_blo{display:inline-block}
+.pos_abs{position:absolute}
+.pos_rel{position:relative}
+
+
+
+/* ******************USER INFO S****************** */
+#userBasicInfoPannel {margin:1em 1.5em;}
+#userBasicInfoPannel  li{background-color:rgba(255,255,255,1);padding:0.5em 1em;}
+#userBasicInfoPannel  .wxAvatar{display:inline-block;width:3em;height:3em;border-radius:3em;vertical-align:middle}
+#userBasicInfoPannel  .wxNickname{display:inline-block;margin-left:1em;}
+/* ******************USER INFO E****************** */
+
+#sorted_questions_answer .questions{
+	height:40%;
+}
+
+.center{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	padding:10px 5px;
+	text-align:center;
+	width:100%;
+	background:#fff;
+	color:#000;
+	transform: translate(-50%, -50%);
+	font-size:2em;
+}
+
+#sorted_questions_answer .questions{
+	height:40%;
+}
+
+.box_container{
+	display: -webkit-flex;
+	display: flex;
+	flex-direction: column ;
+}
+.box_item{
+	 flex-grow:1;
+}
+
+.box_container_hor{
+	display: -webkit-flex;
+	display: flex;
+	justify-content:center;
+	flex-direction: row ;
+}
+
+.sortItem{
+	margin:5px;
+	background-color:#fefefe;
+	padding:2px 5px;
+}
+
+.selected_bg_r1{
+	background-color:#FF3030;
+	color:#fff;
+}
+
+.navigatorBtn{
+	padding:2px 15px;
+	margin:5px;
+	background-color: #00EE00;
+	color:#fff;
+	display:inline-block;
+	font-size:12px;
+	border-radius: 5px;
+	line-height:20px;
+}
+
+
+.navigatorBtn:hover,.sortItem:hover{
+	cursor:pointer
+}
+
+
+#qestionItem_context .center{
+	height:20%
+}
+
+#sorted_questions_answer .sortItemUl{
+	margin:0px;padding:0;overflow:scroll;
+}
+
+#sorted_questions_answer .sortItemUl li{
+	list-style-type:none;margin:2em 0 0 2em;font-size:1.5em;
+}
+
+#sorted_questions_answer .sortItem{
+	height:20em;
+}
+
+.preOrNextArea{
+	height:200px;
+}

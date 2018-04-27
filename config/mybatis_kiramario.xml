@@ -2,7 +2,9 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		<typeAlias alias="YsStatistic" type="com.kiramario.factory.Util.dao.YsStatistic"/>
+		<typeAlias alias="YsStatistic" type="com.kiramario.factory.Util.dto.YsStatistic"/>
+		<typeAlias alias="JdPriceInfoDto" type="com.kiramario.factory.Util.dto.JdPriceInfoDto"/>
+		<typeAlias alias="UserDto" type="com.kiramario.factory.Util.dto.UserDto"/>
 	</typeAliases>
     <environments default="development">
         <environment id="development">
@@ -17,5 +19,7 @@
     </environments>
     <mappers>
         <mapper resource="com/kiramario/factory/Util/dao/mapperXml/YsStatisticMapper.xml"/>
+        <mapper resource="com/kiramario/factory/Util/dao/mapperXml/JdPriceInfoDtoMapper.xml"/>
+        <mapper resource="com/kiramario/factory/Util/dao/mapperXml/UserDtoMapper.xml"/>
     </mappers>
 </configuration>
